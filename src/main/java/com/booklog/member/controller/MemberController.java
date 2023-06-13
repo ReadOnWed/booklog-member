@@ -25,6 +25,7 @@ public class MemberController {
 
     //추후 멤버서비스와 jwt관련 서비스 주입할 예정, 생성자 주입
     //dev branch test
+    //feat branch test
     @Autowired
     public MemberController() {
     }
