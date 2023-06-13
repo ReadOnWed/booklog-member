@@ -30,6 +30,7 @@ public class MemberController {
     //추후 멤버서비스와 jwt관련 서비스 주입할 예정, 생성자 주입->6/13 서비스 주입완료
     //토큰은 redis연결 전까지는 mysql의 임의 컬럼에 저장하고 test할 예정
     //merge login to dev
+    //merge for cicd
     @Autowired
     public MemberController(MemberService memberService, JwtService jwtService) {
         this.memberService=memberService;
