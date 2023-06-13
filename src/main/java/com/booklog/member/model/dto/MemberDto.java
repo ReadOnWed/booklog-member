@@ -18,6 +18,7 @@ public class MemberDto {
     private String member_email;
     //nullable
     private String member_joindate;
+    private String member_token;
     private int member_admin;
     private int member_deleted;
 }
