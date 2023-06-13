@@ -3,6 +3,7 @@ package com.booklog.member.controller;
 
 import com.booklog.jwt.service.JwtService;
 import com.booklog.member.model.dto.MemberDto;
+import com.booklog.member.model.dto.UpdateDto;
 import com.booklog.member.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,7 @@ public class MemberController {
 
     //추후 멤버서비스와 jwt관련 서비스 주입할 예정, 생성자 주입->6/13 서비스 주입완료
     //토큰은 redis연결 전까지는 mysql의 임의 컬럼에 저장하고 test할 예정
+    //비밀번호 변경, 휴면? 정도
     //merge login to dev
     @Autowired
     public MemberController(MemberService memberService, JwtService jwtService) {
@@ -71,6 +73,8 @@ public class MemberController {
                 resultMap.put("message", SUCCESS);
                 resultMap.put("access-token",accessToken);
                 resultMap.put("refresh-token",refreshToken);
+                resultMap.put("member_nickname",loginMember.getMember_nickname());
+                resultMap.put("member_no",loginMember.getMember_no());
                 status=HttpStatus.ACCEPTED;
             }else{
                 resultMap.put("message",FAIL);
@@ -99,9 +103,68 @@ public class MemberController {
         return new ResponseEntity<Map<String, Object>>(resultMap, status);
     }
 
+    @PutMapping("/update")
+    @ApiOperation(value = "Form으로 입력받은 데이터를 토대로 회원 정보 수정")
+    public ResponseEntity<String> update(@RequestBody UpdateDto updateDto) throws Exception{
+        System.out.println(updateDto);
+        HttpStatus status=null;
+        try {
+            if (memberService.updateMember(updateDto)) {
+                status=HttpStatus.ACCEPTED;
+                return new ResponseEntity<String>(SUCCESS,status);
+            }else{
+                status=HttpStatus.BAD_REQUEST;
+                return new ResponseEntity<String>(FAIL,status);
+            }
+        } catch (Exception e) {
+            status=HttpStatus.INTERNAL_SERVER_ERROR;
+            return new ResponseEntity<String>(FAIL,status);
+        }
+    }
+
+    @DeleteMapping("/delete/{member_no}")
+    @ApiOperation(value = "회원 번호를 토대로 회원 정보 삭제")
+    public ResponseEntity<String> delete(@PathVariable("member_no") int member_no) throws Exception{
+        HttpStatus status=null;
+        try {
+            memberService.deleteMember(member_no);
+            status=HttpStatus.ACCEPTED;
+            return new ResponseEntity<String>(SUCCESS,status);
+        } catch (Exception e) {
+            status=HttpStatus.INTERNAL_SERVER_ERROR;
+            return new ResponseEntity<String>(FAIL,status);
+        }
+    }
+
+    @GetMapping("/memberinfo/{member_no}")
+    @ApiOperation(value = "토큰 만료 여부를 확인해 회원정보 반환")
+    public ResponseEntity<Map<String,Object>> getMemberInfo(@PathVariable("member_no") int member_no, HttpServletRequest request) throws Exception{
+        Map<String,Object> resultMap= new HashMap<>();
+        HttpStatus status=HttpStatus.UNAUTHORIZED;
+        if (jwtService.checkToken(request.getHeader("access-token"))){
+            try {
+                MemberDto memberDto=memberService.getMember(member_no);
+                resultMap.put("message",SUCCESS);
+                resultMap.put("memberInfo",memberDto);
+                status=HttpStatus.ACCEPTED;
+            } catch (Exception e) {
+                resultMap.put("message",e.getMessage());
+                status=HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }else{
+            //사용불가능한 토큰임
+            resultMap.put("message",FAIL);
+            status=HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<Map<String,Object>>(resultMap,status);
+    }
+
+    /**
+     * for token
+     */
     @PostMapping("/refresh")
     @ApiOperation(value = "만료된 회원의 access-token을 전달받고 refresh-token으로 새로운 토큰 발급.")
-    public ResponseEntity<?> refreshToken(MemberDto memberDto, HttpServletRequest request) throws  Exception{
+    public ResponseEntity<?> refresh(MemberDto memberDto, HttpServletRequest request) throws  Exception{
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         String token = request.getHeader("refresh-token");

@@ -13,4 +13,14 @@
         set member_token = #{token, jdbcType=VARCHAR}
         where member_no = #{member_no}
     </update>
+    <update id="updateMember" parameterType="com.booklog.member.model.dto.UpdateDto">
+        update member
+        set member_name=#{member_name},member_email=#{member_email}, member_nickname=#{member_nickname}
+        where member_no=#{member_no}
+    </update>
+    <update id="deleteMember" parameterType="int">
+        update member
+        set member_deleted=1
+        where member_no=#{member_no}
+    </update>
 </mapper>

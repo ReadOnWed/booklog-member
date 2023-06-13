@@ -2,8 +2,10 @@ package com.booklog.member.service;
 
 import com.booklog.member.dao.MemberDao;
 import com.booklog.member.model.dto.MemberDto;
+import com.booklog.member.model.dto.UpdateDto;
 import com.booklog.member.model.entity.Member;
 import com.booklog.member.repository.MemberRepository;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,11 +40,11 @@ public class MemberServiceImpl implements MemberService{
             //암호화하여 저장
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             String securePw = encoder.encode(memberDto.getMember_pw());
-            memberDto.setMember_pw(securePw);
             Member memberEntity= Member.builder()
                                  .memberId(memberDto.getMember_id())
                                  .memberName(memberDto.getMember_name())
-                                 .memberPw(memberDto.getMember_pw())
+                                 .memberPw(securePw)
+                                 .memberNickname(memberDto.getMember_nickname())
                                  .memberEmail(memberDto.getMember_email())
                                  .build();
             //for debug
@@ -53,14 +55,15 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberDto loginMember(MemberDto memberDto) {
-        Member memberEntity=memberRepository.findByMemberId(memberDto.getMember_id());
+    public MemberDto loginMember(MemberDto loginDto) {
+        Member memberEntity=memberRepository.findByMemberId(loginDto.getMember_id());
         if (memberEntity != null) { // parameter로 받은 평문과 DB에 저장된 암호화값 비교
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            if (encoder.matches(memberDto.getMember_pw(), memberEntity.getMemberPw())) {
-                memberDto.setMember_no(memberEntity.getMemberNo());
-                System.out.println(memberDto);
-                return memberDto;
+            if (encoder.matches(loginDto.getMember_pw(), memberEntity.getMemberPw())) {
+                loginDto.setMember_nickname(memberEntity.getMemberNickname());
+                loginDto.setMember_no(memberEntity.getMemberNo());
+                System.out.println(loginDto);
+                return loginDto;
             }
         }
         //for debug
@@ -89,5 +92,35 @@ public class MemberServiceImpl implements MemberService{
     public String getRefreshToken(int memberNo) {
         Member memberEntity=memberRepository.findByMemberNo(memberNo);
         return memberEntity.getMemberToken();
+    }
+
+    @Override
+    public boolean updateMember(UpdateDto updateDto) {
+        try {
+            memberDao.updateMember(updateDto);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteMember(int member_no) {
+        try {
+            memberDao.deleteMember(member_no);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public MemberDto getMember(int memberNo) {
+        Member entity= memberRepository.findByMemberNo(memberNo);
+        MemberDto memberDto=new MemberDto(entity.getMemberNo(),entity.getMemberNickname(),
+                entity.getMemberId(),null,entity.getMemberName(), entity.getMemberEmail(), entity.getMemberJoindate());
+        return memberDto;
     }
 }

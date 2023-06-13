@@ -23,6 +23,8 @@ public class Member {
     private String memberName;
     @Column(name = "member_email", nullable = false)
     private String memberEmail;
+    @Column(name = "member_nickname", nullable = false)
+    private String memberNickname;
     @Column(name = "member_joindate", nullable = true, insertable = false)
     private String memberJoindate;
     @Column(name = "member_admin", nullable = true,insertable = false)
