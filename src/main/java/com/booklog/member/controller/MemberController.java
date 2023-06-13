@@ -32,6 +32,7 @@ public class MemberController {
     //토큰은 redis연결 전까지는 mysql의 임의 컬럼에 저장하고 test할 예정
     //비밀번호 변경, 휴면? 정도
     //merge login to dev
+    //merger update to dev
     @Autowired
     public MemberController(MemberService memberService, JwtService jwtService) {
         this.memberService=memberService;
