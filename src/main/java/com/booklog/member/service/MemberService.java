@@ -1,10 +1,8 @@
 package com.booklog.member.service;
 
 
-import com.booklog.member.model.MemberDto;
-import org.springframework.stereotype.Service;
+import com.booklog.member.model.dto.MemberDto;
 
-@Service
 public interface MemberService {
     boolean registMember(MemberDto memberDto) throws Exception;
 }

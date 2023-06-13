@@ -27,6 +27,16 @@ dependencies {
 	implementation "io.jsonwebtoken:jjwt:0.9.1"
 	//swagger
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+	//junit
+	implementation 'au.com.dius:pact-jvm-provider-junit5-spring:4.0.10'
+	//mybatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0'
+
+	// JUnit5
+	testImplementation("org.junit.platform:junit-platform-launcher:1.5.2")
+	testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+	// Spring Boot Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	//dev
 	compileOnly 'org.projectlombok:lombok'
@@ -35,6 +45,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
 }
