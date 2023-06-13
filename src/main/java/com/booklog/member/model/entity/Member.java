@@ -12,7 +12,7 @@ import javax.persistence.*;
 @ToString
 public class Member {
     @Id
-    @Column(name = "member_no", nullable = false)
+    @Column(name = "member_no", nullable = true, insertable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int memberNo;
     @Column(name = "member_id", nullable = false)
@@ -29,4 +29,6 @@ public class Member {
     private String memberAdmin;
     @Column(name = "member_deleted", nullable = true, insertable = false)
     private String memberDeleted;
+    @Column(name = "member_token", nullable = true, insertable = false)
+    private String memberToken;
 }

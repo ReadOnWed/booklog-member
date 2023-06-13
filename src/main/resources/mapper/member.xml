@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.booklog.member.dao.MemberDao">
+    <update id="saveRefreshToken" parameterType="map">
+        update member
+        set member_token = #{token}
+        where member_no = #{member_no}
+    </update>
+    <update id="deleteRefreshToken" parameterType="map">
+        update member
+        set member_token = #{token, jdbcType=VARCHAR}
+        where member_no = #{member_no}
+    </update>
+</mapper>
