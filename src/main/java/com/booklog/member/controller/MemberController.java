@@ -30,6 +30,7 @@ public class MemberController {
 
     //추후 멤버서비스와 jwt관련 서비스 주입할 예정, 생성자 주입->6/13 서비스 주입완료
     //토큰은 redis연결 전까지는 mysql의 임의 컬럼에 저장하고 test할 예정
+    //global 예외처리
     //비밀번호 변경, 휴면? 정도
     //merge login to dev
     //merger update to dev
@@ -125,6 +126,7 @@ public class MemberController {
 
     @DeleteMapping("/delete/{member_no}")
     @ApiOperation(value = "회원 번호를 토대로 회원 정보 삭제")
+    //enum type으로 관리하면 편리할 듯.
     public ResponseEntity<String> delete(@PathVariable("member_no") int member_no) throws Exception{
         HttpStatus status=null;
         try {
